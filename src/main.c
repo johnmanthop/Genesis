@@ -1,22 +1,23 @@
 #include <genesis.h>
+
+#include "room.h"
 #include "map.h"
 
 int main(bool hard)
 {
-    //VDP_drawText("alaiz", 10, 10);
+    VDP_loadTileSet(&room_tileset, 1, DMA);
 
-    PAL_setPalette(PAL0, palette_all.data, DMA);
+    PAL_setPalette(PAL1, room_palette.data, DMA);
 
-    u16 ind = TILE_USER_INDEX;
-    VDP_loadTileSet(&level_tileset, ind, DMA);
-    ind += level_tileset.numTile;
+    struct Room r;
 
-    Map *bga = MAP_create(&level_map, BG_A, TILE_ATTR_FULL(0, FALSE, FALSE, FALSE, TILE_USER_INDEX));
+    room_init(&r, 1);
+    room_create_random_grid(&r, 20);
 
-    u32 offset = 0;
+    room_display(&r, 3, 3);
+
     while (1)
     {
-        MAP_scrollTo(bga, offset, offset);
         // wait for screen refresh
         SYS_doVBlankProcess();
     }
