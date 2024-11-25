@@ -7,16 +7,10 @@ struct Point grid_constructs[4][3] = {
     { {  .x = 0, .y = 0 }, { .x = 1, .y = 0 }, { .x = 2,  .y = 0 } }
 };
 
-static void clamp_point(struct Point *p, u8 lower_lim_x, u8 lower_lim_y, u8 upper_lim_x, u8 upper_lim_y)
-{
-    if (p->x < lower_lim_x) p->x = lower_lim_x;
-    if (p->y < lower_lim_y) p->y = lower_lim_y;
-    if (p->x > upper_lim_x) p->x = upper_lim_x;
-    if (p->y > upper_lim_y) p->y = upper_lim_y;
-}
-
 void room_init(struct Room *r, u8 vram_index)
 {
+    VDP_loadTileSet(&room_tileset, vram_index, DMA);
+
     r->vram_index = vram_index;
 
     for (u8 i = 0; i < ROOM_H; ++i)
@@ -71,6 +65,9 @@ void room_create_random_grid(struct Room *r, u8 lim)
 
 void room_display(const struct Room *r, u8 x, u8 y)
 {
+    /* The boxes need to be drawn at a different plane */
+    PAL_setPalette(PAL1, room_palette.data, DMA);
+    
     for (u8 i = 0; i < ROOM_H; ++i)
     {
         for (u8 j = 0; j < ROOM_W; ++j)

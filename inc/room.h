@@ -3,6 +3,9 @@
 
 #include <genesis.h>
 
+#include "room_res.h"
+#include "misc.h"
+
 #define ROOM_W 17
 #define ROOM_H 11
 
@@ -25,11 +28,6 @@ struct Room
 {
     u8 vram_index;
     u8 room_descriptor[ROOM_H][ROOM_W];
-};
-
-struct Point
-{
-    s8 x, y;
 };
 
 extern struct Point grid_constructs[4][3];

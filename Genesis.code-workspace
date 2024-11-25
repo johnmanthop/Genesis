@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"genesis.h": "c",
+			"character.h": "c",
+			"room.h": "c",
+			"vdp_tile.h": "c",
+			"character_res.h": "c"
+		}
+	}
+}

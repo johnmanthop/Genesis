@@ -51,4 +51,4 @@ out/src/room.o: src/room.c inc/room.h \
  /home/ioannis/Genesis/SGDK/inc/config.h \
  /home/ioannis/Genesis/SGDK/inc/string.h \
  /home/ioannis/Genesis/SGDK/inc/maths.h \
- /home/ioannis/Genesis/SGDK/inc/dma.h
+ /home/ioannis/Genesis/SGDK/inc/dma.h res/room_res.h inc/misc.h
