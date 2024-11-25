@@ -55,7 +55,7 @@ int main(bool hard)
 
     while (1)
     {
-        handle_player_input(&ch, player_v_x, player_v_y);
+        handle_player_input(&ch, &r, player_v_x, player_v_y);
         // wait for screen refresh
         SPR_update();
         SYS_doVBlankProcess();

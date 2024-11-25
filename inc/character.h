@@ -3,6 +3,7 @@
 
 #include <genesis.h>
 #include "misc.h"
+#include "room.h"
 #include "character_res.h"
 
 struct Character
@@ -13,7 +14,7 @@ struct Character
     u8 vram_index;
 };
 
-void character_init(struct Character *ch);
-void handle_player_input(struct Character *ch, s8 v_x, s8 v_y);
+void character_init     (struct Character *ch);
+void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y);
 
 #endif
