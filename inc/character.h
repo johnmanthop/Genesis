@@ -6,6 +6,9 @@
 #include "room.h"
 #include "character_res.h"
 
+#define PL_OFFSET_Y 25
+#define PL_OFFSET_X 25
+
 struct Character
 {
     struct Point position;
