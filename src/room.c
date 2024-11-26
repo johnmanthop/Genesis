@@ -65,7 +65,7 @@ void room_create_random_grid(struct Room *r, u8 lim)
 
 void room_display(const struct Room *r, u8 x, u8 y)
 {
-    /* The boxes need to be drawn at a different plane */
+    /* The boxes *should* to be drawn at a different plane */
     PAL_setPalette(PAL1, room_palette.data, DMA);
     
     for (u8 i = 0; i < ROOM_H; ++i)

@@ -8,61 +8,94 @@ void character_init(struct Character *ch)
     SPR_setAnim(ch->sp, 1);
 }
 
-void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y)
+static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
 {
-    // r_x and r_y are the player's coordinates transormed at the center of the sprite
-    u16 r_x = ch->position.x + 8;
-    u16 r_y = ch->position.y + 8;
-
-    if (v_x < 0 && r_x == 0) return;
-    if (v_x > 0 && r_x + 16 == ROOM_W << 4) return;
-
     if (v_x)
     {
-        SPR_setAnim(ch->sp, (v_x > 0)? 2 : 1);
+        s8 grid_offset = (v_x > 0) ? 1 : (-1);
+        s8 pixel_offset = (v_x > 0) ? 1 : (-1);
 
-        s8 grid_offset  = (v_x > 0)? 1 : (-1);
-        s8 pixel_offset = (v_x > 0)? 8 : (-8);
-
-        // if the next tile to the dirrection of movement is a box
-        if (grid->room_descriptor[r_y >> 4][(r_x >> 4) + grid_offset] == TILE_BOX)
+        if (grid->room_descriptor[y >> 4][(x >> 4) + grid_offset] == TILE_BOX)
         {
             // if the player tile position + a small delta is still the same tile, the player can move
-            if ((r_x >> 4) == ((r_x + pixel_offset) >> 4))
-            {
-                ch->position.x += v_x;
-                SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
-            }
+            return ((x >> 4) == ((x + pixel_offset) >> 4));
         }
         else 
         {
-            ch->position.x += v_x;
-            SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
+            return true;
         }
     }
     else if (v_y)
     {
-        SPR_setAnim(ch->sp, (v_y < 0)? 3 : 0);
+        s8 grid_offset = (v_y > 0) ? 1 : (-1);
+        s8 pixel_offset = (v_y > 0) ? 1 : (-1);
 
-        s8 grid_offset  = (v_y > 0)? 1 : (-1);
-        s8 pixel_offset = (v_y > 0)? 8 : (-8);
-
-        if (grid->room_descriptor[(r_y >> 4) + grid_offset ][r_x >> 4] == TILE_BOX)
+        if (grid->room_descriptor[(y >> 4) + grid_offset][x >> 4] == TILE_BOX)
         {
-            if (((r_y + pixel_offset) >> 4) == (r_y >> 4))
-            {
-                ch->position.y += v_y;
-                SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
-            }
+            // if the player tile position + a small delta is still the same tile, the player can move
+            return ((y >> 4) == ((y + pixel_offset) >> 4));
         }
         else 
         {
-            ch->position.y += v_y;
-            SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
+            return true;
         }
     }
     else 
     {
-        // SPR_setFrame(ch->sp, 0);
+        return false;
     }
+}
+
+void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y)
+{
+
+    // top left
+    u16 x1 = ch->position.x + 2;
+    u16 y1 = ch->position.y + 2;
+
+    // top right
+    u16 x2 = x1 + 13;
+    u16 y2 = y1;
+
+    // bot left;
+    u16 x3 = x1;
+    u16 y3 = y1 + 13;
+    // bot right
+    u16 x4 = x1 + 13;
+    u16 y4 = y1 + 13; 
+
+    if (v_x > 0)        
+    {
+        SPR_setAnim(ch->sp, 2);
+        if (ch->position.x + 16 >= (ROOM_W << 4) - 1) return;
+    }
+    else if (v_x < 0)   
+    {
+        SPR_setAnim(ch->sp, 1);
+        if (ch->position.x <= 0) return;
+    }
+    else if (v_y > 0)
+    {
+        SPR_setAnim(ch->sp, 0);
+        if (ch->position.y + 16 >= (ROOM_H << 4) - 2) return;
+    }
+    else if (v_y < 0)
+    {
+        SPR_setAnim(ch->sp, 3);
+        if (ch->position.y <= 0) return;
+    }
+
+    bool is_legal_move_hitbox = is_legal_move(grid, x1, y1, v_x, v_y) &&
+                                is_legal_move(grid, x2, y2, v_x, v_y) &&
+                                is_legal_move(grid, x3, y3, v_x, v_y) &&
+                                is_legal_move(grid, x4, y4, v_x, v_y);
+
+    if (is_legal_move_hitbox)
+    {
+        ch->position.x += v_x;
+        ch->position.y += v_y;
+        SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
+    }
+
+
 }
