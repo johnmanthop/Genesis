@@ -2,10 +2,18 @@
 
 void character_init(struct Character *ch)
 {
-    ch->position.x = 0; ch->position.y = 0;
-
-    ch->sp = SPR_addSprite(&char_sprite, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y, TILE_ATTR_FULL(PAL2, TRUE, FALSE, FALSE, 0));
-    SPR_setAnim(ch->sp, 1);
+    ch->health          = 100;
+    ch->position.x      = 0; 
+    ch->position.y      = 0;
+    ch->direction       = LEFT;
+    
+   	ch->sp = SPR_addSprite(&char_sprite, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y, TILE_ATTR(PAL1, FALSE, FALSE, FALSE));
+    SPR_setAnim(ch->sp, LEFT);
+	
+	for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+	{
+		ch->bullets[i].sp = NULL;
+	}
 }
 
 static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
@@ -46,9 +54,10 @@ static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
     }
 }
 
-void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y)
-{
+static u8 last_frame_fire = 0;
 
+void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire)
+{
     // top left
     u16 x1 = ch->position.x + 2;
     u16 y1 = ch->position.y + 2;
@@ -64,24 +73,51 @@ void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y
     u16 x4 = x1 + 13;
     u16 y4 = y1 + 13; 
 
+    if (fire && !last_frame_fire)
+    {
+		for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+		{
+			if (ch->bullets[i].sp == NULL)
+			{
+        		last_frame_fire = 1;
+				ch->bullets[i].frames_active = 0;
+        		ch->bullets[i].position    = ch->position;
+				ch->bullets[i].position.x  += 4;
+				ch->bullets[i].position.y  += 4;
+        		ch->bullets[i].direction   = ch->direction;
+    
+				ch->bullets[i].sp          = SPR_addSprite(&bullet_sprite, 
+                                                          ch->bullets[i].position.x + PL_OFFSET_X, 
+                                                          ch->bullets[i].position.y + PL_OFFSET_Y, 
+                                                          TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+				break;
+			}
+		}
+    }
+    else if (!fire) last_frame_fire = 0;
+
     if (v_x > 0)        
     {
-        SPR_setAnim(ch->sp, 2);
+        ch->direction = RIGHT;
+        SPR_setAnim(ch->sp, RIGHT);
         if (ch->position.x + 16 >= (ROOM_W << 4) - 1) return;
     }
     else if (v_x < 0)   
     {
-        SPR_setAnim(ch->sp, 1);
+        ch->direction = LEFT;
+        SPR_setAnim(ch->sp, LEFT);
         if (ch->position.x <= 0) return;
     }
     else if (v_y > 0)
     {
-        SPR_setAnim(ch->sp, 0);
+        ch->direction = DOWN;
+        SPR_setAnim(ch->sp, DOWN);
         if (ch->position.y + 16 >= (ROOM_H << 4) - 2) return;
     }
     else if (v_y < 0)
     {
-        SPR_setAnim(ch->sp, 3);
+        ch->direction = UP;
+        SPR_setAnim(ch->sp, UP);
         if (ch->position.y <= 0) return;
     }
 
@@ -96,6 +132,32 @@ void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y
         ch->position.y += v_y;
         SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
     }
+}
 
+void character_tick_bullets(struct Character *ch)
+{
+    for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+    {
+		// empty spot check
+		if (ch->bullets[i].sp == NULL) continue;
+		
+		if (ch->bullets[i].frames_active >= B_LIM)
+		{
+			SPR_releaseSprite(ch->bullets[i].sp);
+			ch->bullets[i].sp = NULL;
+		}
+		else
+		{
+    		switch (ch->bullets[i].direction)
+        	{
+            	case UP:    ch->bullets[i].position.y -= B_SPEED; break;
+            	case DOWN:  ch->bullets[i].position.y += B_SPEED; break;
+            	case LEFT:  ch->bullets[i].position.x -= B_SPEED; break;
+            	case RIGHT: ch->bullets[i].position.x += B_SPEED; break;
+        	}
 
+        	SPR_setPosition(ch->bullets[i].sp, ch->bullets[i].position.x + PL_OFFSET_X, ch->bullets[i].position.y + PL_OFFSET_Y);
+        	ch->bullets[i].frames_active++;
+    	}
+	}
 }

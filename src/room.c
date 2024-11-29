@@ -65,17 +65,19 @@ void room_create_random_grid(struct Room *r, u8 lim)
 
 void room_display(const struct Room *r, u8 x, u8 y)
 {
-    /* The boxes *should* to be drawn at a different plane */
-    PAL_setPalette(PAL1, room_palette.data, DMA);
     
     for (u8 i = 0; i < ROOM_H; ++i)
     {
         for (u8 j = 0; j < ROOM_W; ++j)
         {
-            u8 vram_offset = r->room_descriptor[i][j];
+            u8 tile = r->room_descriptor[i][j];
+            u8 vram_offset = tile; // in the enum definition, the tiles are the same values as their vram offsets
+            u8 plane    = (tile == TILE_BOX || tile == TILE_ENT) ? BG_A : BG_B;
+            u8 priority = (tile == TILE_BOX);
 
-            VDP_fillTileMapRectInc(BG_A, TILE_ATTR_FULL(PAL1, 0, FALSE, FALSE, r->vram_index + vram_offset), 
-                                                x + (j << 1), y + (i << 1), 2, 2);
+
+                VDP_fillTileMapRectInc(plane, TILE_ATTR_FULL(PAL1, priority, FALSE, FALSE, r->vram_index + vram_offset), 
+                                                                x + (j << 1), y + (i << 1), 2, 2);
         }
     }
 }

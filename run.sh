@@ -1,3 +1,3 @@
 #!/bin/bash
 
-wine gens/gens.exe ../out/rom.bin
+blastem out/rom.bin

@@ -3,13 +3,16 @@
 #include "room.h"
 #include "character.h"
 
-s8 player_v_x = 0;
-s8 player_v_y = 0;
+s8 player_v_x       = 0;
+s8 player_v_y       = 0;
+u8 fire             = 0;
 
 void joystick_callback(u16 joy, u16 changed, u16 state)
 {
     if (joy == JOY_1)
     {
+        fire = (state & BUTTON_A);
+        
         if (state & BUTTON_RIGHT)
         {
             player_v_x = 1;
@@ -46,16 +49,17 @@ int main(bool hard)
     SPR_init();
     JOY_init();
     JOY_setEventHandler(&joystick_callback);
-
-    room_init(&r, 1);
+	PAL_setPalette(PAL1, room_palette.data, DMA);
+    
+	room_init(&r, 1);
     room_create_random_grid(&r, 20);
     room_display(&r, 3, 3);
-
     character_init(&ch);
 
     while (1)
     {
-        handle_player_input(&ch, &r, player_v_x, player_v_y);
+        handle_player_input(&ch, &r, player_v_x, player_v_y, fire);
+        character_tick_bullets(&ch);
         // wait for screen refresh
         SPR_update();
         SYS_doVBlankProcess();
