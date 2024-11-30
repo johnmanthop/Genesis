@@ -1,4 +1,4 @@
-out/src/character.o: src/character.c inc/character.h \
+out/src/bullet.o: src/bullet.c inc/bullet.h \
  /home/ioannis/Genesis/SGDK/inc/genesis.h \
  /home/ioannis/Genesis/SGDK/inc/types.h \
  /home/ioannis/Genesis/SGDK/inc/config.h \
@@ -51,5 +51,4 @@ out/src/character.o: src/character.c inc/character.h \
  /home/ioannis/Genesis/SGDK/inc/config.h \
  /home/ioannis/Genesis/SGDK/inc/string.h \
  /home/ioannis/Genesis/SGDK/inc/maths.h \
- /home/ioannis/Genesis/SGDK/inc/dma.h inc/misc.h inc/room.h \
- res/room_res.h res/character_res.h inc/bullet.h
+ /home/ioannis/Genesis/SGDK/inc/dma.h inc/misc.h

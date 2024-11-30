@@ -485,9 +485,9 @@
 00009482 t _errorexception_callback
 000094ac t internal_reset
 000095f2 t main.isra.0
-0000a638 T _start_entry
-0000a7c8 T _reset_entry
-0000a7d0 T XGM_doVBlankProcess
+0000a66a T _start_entry
+0000a7fa T _reset_entry
+0000a802 T XGM_doVBlankProcess
 0000a900 T smp_null
 0000aa00 T smp_null_dpcm
 0000aa80 T __CTOR_LIST__

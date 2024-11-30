@@ -51,4 +51,4 @@ out/src/main.o: src/main.c /home/ioannis/Genesis/SGDK/inc/genesis.h \
  /home/ioannis/Genesis/SGDK/inc/string.h \
  /home/ioannis/Genesis/SGDK/inc/maths.h \
  /home/ioannis/Genesis/SGDK/inc/dma.h inc/room.h res/room_res.h \
- inc/misc.h inc/character.h inc/room.h res/character_res.h
+ inc/misc.h inc/character.h inc/room.h res/character_res.h inc/bullet.h

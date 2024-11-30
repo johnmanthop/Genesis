@@ -1,5 +1,7 @@
 #include "character.h"
 
+static u8 last_frame_fire = 0;
+
 void character_init(struct Character *ch)
 {
     ch->health          = 100;
@@ -53,8 +55,6 @@ static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
         return false;
     }
 }
-
-static u8 last_frame_fire = 0;
 
 void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire)
 {
@@ -134,30 +134,22 @@ void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y
     }
 }
 
+
 void character_tick_bullets(struct Character *ch)
 {
     for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
     {
-		// empty spot check
-		if (ch->bullets[i].sp == NULL) continue;
-		
-		if (ch->bullets[i].frames_active >= B_LIM)
+		if (ch->bullets[i].sp != NULL) 
 		{
-			SPR_releaseSprite(ch->bullets[i].sp);
-			ch->bullets[i].sp = NULL;
+			set_bullet_state(&ch->bullets[i]);
 		}
-		else
-		{
-    		switch (ch->bullets[i].direction)
-        	{
-            	case UP:    ch->bullets[i].position.y -= B_SPEED; break;
-            	case DOWN:  ch->bullets[i].position.y += B_SPEED; break;
-            	case LEFT:  ch->bullets[i].position.x -= B_SPEED; break;
-            	case RIGHT: ch->bullets[i].position.x += B_SPEED; break;
-        	}
+	}
 
-        	SPR_setPosition(ch->bullets[i].sp, ch->bullets[i].position.x + PL_OFFSET_X, ch->bullets[i].position.y + PL_OFFSET_Y);
-        	ch->bullets[i].frames_active++;
-    	}
+	for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+	{
+		if (ch->bullets[i].sp != NULL)
+		{
+			move_bullet(&ch->bullets[i]);
+		}
 	}
 }

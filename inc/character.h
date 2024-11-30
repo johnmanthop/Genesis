@@ -5,29 +5,11 @@
 #include "misc.h"
 #include "room.h"
 #include "character_res.h"
+#include "bullet.h"
 
-#define B_SPEED     2
-#define B_LIM       45
 #define PL_OFFSET_Y 25
 #define PL_OFFSET_X 25
 #define MAX_ACTIVE_BULLETS 8
-
-// dir values equal the sprite animation ids
-enum DIR 
-{
-    UP = 3, 
-    DOWN = 0, 
-    LEFT = 1, 
-    RIGHT = 2
-};
-
-struct Bullet
-{
-    Sprite *sp;
-    enum DIR direction;
-    struct Point position;
-    u16 frames_active;
-};
 
 struct Character
 {
