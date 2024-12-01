@@ -3,6 +3,7 @@
 
 #include <genesis.h>
 #include "misc.h"
+#include "room.h"
 
 #define B_SPEED     2
 #define B_LIM       45
@@ -25,7 +26,8 @@ struct Bullet
     u16 frames_active;
 };
 
-void set_bullet_state(struct Bullet *b);
-void move_bullet(struct Bullet *b);
+void set_bullet_state	(struct Bullet *b);
+void move_bullet		(struct Bullet *b);
+void populate_grid_info	(struct Room *r);
 
 #endif

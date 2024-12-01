@@ -135,7 +135,7 @@ void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y
 }
 
 
-void character_tick_bullets(struct Character *ch)
+void character_tick_bullets(struct Character *ch, struct Room *grid)
 {
     for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
     {

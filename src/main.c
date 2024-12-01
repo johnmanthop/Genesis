@@ -2,6 +2,7 @@
 
 #include "room.h"
 #include "character.h"
+#include "bullet.h"
 
 s8 player_v_x       = 0;
 s8 player_v_y       = 0;
@@ -54,12 +55,15 @@ int main(bool hard)
 	room_init(&r, 1);
     room_create_random_grid(&r, 20);
     room_display(&r, 3, 3);
-    character_init(&ch);
+
+	character_init(&ch);
+	
+	populate_grid_info(&r);
 
     while (1)
     {
         handle_player_input(&ch, &r, player_v_x, player_v_y, fire);
-        character_tick_bullets(&ch);
+        character_tick_bullets(&ch, &r);
         // wait for screen refresh
         SPR_update();
         SYS_doVBlankProcess();

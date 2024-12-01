@@ -51,4 +51,5 @@ out/src/bullet.o: src/bullet.c inc/bullet.h \
  /home/ioannis/Genesis/SGDK/inc/config.h \
  /home/ioannis/Genesis/SGDK/inc/string.h \
  /home/ioannis/Genesis/SGDK/inc/maths.h \
- /home/ioannis/Genesis/SGDK/inc/dma.h inc/misc.h
+ /home/ioannis/Genesis/SGDK/inc/dma.h inc/misc.h inc/room.h \
+ res/room_res.h
