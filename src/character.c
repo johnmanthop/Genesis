@@ -1,6 +1,7 @@
 #include "character.h"
 
 static u8 last_frame_fire = 0;
+static enum DIR direction_mapping[4] = { LEFT, RIGHT, UP, DOWN };
 
 void character_init(struct Character *ch)
 {
@@ -16,6 +17,46 @@ void character_init(struct Character *ch)
 	{
 		ch->bullets[i].sp = NULL;
 	}
+}
+
+void character_set_random_direction(struct Character *ch)
+{
+	ch->direction = direction_mapping[random() % 4];
+}
+
+void character_set_direction(struct Character *ch, enum DIR d)
+{
+	ch->direction = d;
+	SPR_setAnim(ch->sp, d);
+}
+
+void character_set_position(struct Character *ch, s16 x, s16 y)
+{
+	ch->position.x = x;
+	ch->position.y = y;
+	SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
+}
+
+void character_move_to_direction(struct Character *ch, struct Room *grid)
+{
+	u8 v_x = 0, v_y = 0;
+
+	switch (ch->direction)
+	{
+		case LEFT: 	v_x = -1; break;
+		case RIGHT: v_x =  1; break;
+		case UP:	v_y = -1; break;
+		case DOWN:  v_y =  1; break;	
+	}
+
+	handle_player_input(ch, grid, v_x, v_y, 0);
+}
+
+void character_move(struct Character *ch, s16 x, s16 y)
+{
+	ch->position.x += x;
+	ch->position.y += y;
+	SPR_setPosition(ch->sp, ch->position.x + PL_OFFSET_X, ch->position.y + PL_OFFSET_Y);
 }
 
 static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)

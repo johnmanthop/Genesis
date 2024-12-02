@@ -3,6 +3,7 @@
 #include "room.h"
 #include "character.h"
 #include "bullet.h"
+#include "enemies.h"
 
 s8 player_v_x       = 0;
 s8 player_v_y       = 0;
@@ -46,6 +47,7 @@ int main(bool hard)
 {
     struct Room r;
     struct Character ch;
+	struct Character enemies[MAX_ENEMIES];
 
     SPR_init();
     JOY_init();
@@ -60,8 +62,11 @@ int main(bool hard)
 	
 	populate_grid_info(&r);
 
+	enemies_init(enemies, &r);
+
     while (1)
     {
+		enemies_move(enemies, &ch);
         handle_player_input(&ch, &r, player_v_x, player_v_y, fire);
         character_tick_bullets(&ch, &r);
         // wait for screen refresh
