@@ -11,6 +11,8 @@ void enemies_init(struct Character enemies[], struct Room *r)
 	for (u8 i = 0; i < MAX_ENEMIES; ++i)
 	{
 		character_init(&enemies[i]);
+        
+        enemies[i].b_lim = 45;
 
 		s16 x = random() % ROOM_W;
 		s16 y = random() % ROOM_H;
@@ -104,6 +106,9 @@ void enemies_move(struct Character enemies[], struct Character *pl)
 {
 	for (u8 i = 0; i < MAX_ENEMIES; ++i)
 	{
-		move_single_enemy(&enemies[i], pl, i);
-	}
+        if (enemies[i].sp != NULL)
+        {
+		    move_single_enemy(&enemies[i], pl, i);
+        }
+    }
 }

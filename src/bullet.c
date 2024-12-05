@@ -1,7 +1,14 @@
+#include "enemies.h"
 #include "bullet.h"
 
 static u8 box_counter = 0;
 static struct Point box_positions[ROOM_H * ROOM_W];
+
+static void del_bullet(struct Bullet *b)
+{
+    SPR_releaseSprite(b->sp);
+	b->sp = NULL;
+}
 
 static bool check_bullet_collisions(struct Bullet *b)
 {
@@ -46,7 +53,7 @@ void populate_grid_info(struct Room *r)
 	}
 }	
 
-void move_bullet(struct Bullet *b)
+void bullet_move(struct Bullet *b)
 {		
     switch (b->direction)
     {
@@ -60,12 +67,56 @@ void move_bullet(struct Bullet *b)
     b->frames_active++;
 }
 
-void set_bullet_state(struct Bullet *b)
+
+void bullet_check_hits(struct Character *pl, struct Character *enemies)
 {
-	if (b->frames_active >= B_LIM || check_bullet_collisions(b))
+    // first player hits
+    for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+    {
+        if (pl->bullets[i].sp == NULL) continue;
+
+        struct Point *bp = &pl->bullets[i].position;
+        for (u8 j = 0; j < MAX_ENEMIES; ++j)
+        {
+            struct Point *ep = &enemies[j].position;
+            
+            if (bp->x >= ep->x && bp->x <= ep->x + 16 &&
+                bp->y >= ep->y && bp->y <= ep->y + 16)
+            {
+                enemies[j].health -= 20;
+                del_bullet(&pl->bullets[i]);
+            }
+        }
+    }
+    
+    struct Point *pp = &pl->position;
+
+    for (u8 j = 0; j < MAX_ENEMIES; ++j)
+    {
+        if (enemies[j].sp == NULL) continue;
+
+        for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+        {
+            if (enemies[j].bullets[i].sp == NULL) continue;
+
+            struct Point *bp = &enemies[j].bullets[i].position;
+            
+            if (bp->x >= pp->x && bp->x <= pp->x + 16 &&
+                bp->y >= pp->y && bp->y <= pp->y + 16)
+            {
+                pl->health -= 20;
+                del_bullet(&enemies[j].bullets[i]);
+            }
+
+        }
+    }
+}
+
+void bullet_set_state(struct Bullet *b, u8 b_lim)
+{
+	if (b->frames_active >= b_lim || check_bullet_collisions(b))
 	{
 		// maybe play a sound clip
-		SPR_releaseSprite(b->sp);
-		b->sp = NULL;
+        del_bullet(b);
 	}
 }

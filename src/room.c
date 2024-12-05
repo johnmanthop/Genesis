@@ -59,8 +59,6 @@ void room_create_random_grid(struct Room *r, u8 lim)
             r->room_descriptor[construct[0].y][construct[0].x] = TILE_BOX;
         }
     }
-
-    r->room_descriptor[(random() % ROOM_H - 1) + 1][(random() % ROOM_W - 1) + 1] = TILE_ENT;
 }
 
 void room_display(const struct Room *r, u8 x, u8 y)
@@ -72,11 +70,10 @@ void room_display(const struct Room *r, u8 x, u8 y)
         {
             u8 tile = r->room_descriptor[i][j];
             u8 vram_offset = tile; // in the enum definition, the tiles are the same values as their vram offsets
-            u8 plane    = (tile == TILE_BOX || tile == TILE_ENT) ? BG_A : BG_B;
             u8 priority = (tile == TILE_BOX);
 
 
-                VDP_fillTileMapRectInc(plane, TILE_ATTR_FULL(PAL1, priority, FALSE, FALSE, r->vram_index + vram_offset), 
+                VDP_fillTileMapRectInc(BG_A, TILE_ATTR_FULL(PAL1, priority, FALSE, FALSE, r->vram_index + vram_offset), 
                                                                 x + (j << 1), y + (i << 1), 2, 2);
         }
     }

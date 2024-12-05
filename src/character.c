@@ -3,8 +3,15 @@
 static u8 last_frame_fire = 0;
 static enum DIR direction_mapping[4] = { LEFT, RIGHT, UP, DOWN };
 
+static void del_character(struct Character *ch)
+{
+    SPR_releaseSprite(ch->sp);
+    ch->sp = NULL;
+}
+
 void character_init(struct Character *ch)
 {
+    ch->b_lim           = 70;
     ch->health          = 100;
     ch->position.x      = 0; 
     ch->position.y      = 0;
@@ -111,6 +118,14 @@ static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
     }
 }
 
+void character_check_health_zero(struct Character *ch)
+{
+    if (ch-> health<= 0)
+    {
+        del_character(ch);
+    }
+}
+
 void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire, u8 player_flag)
 {
     // top left
@@ -187,7 +202,7 @@ void character_tick_bullets(struct Character *ch, struct Room *grid)
     {
 		if (ch->bullets[i].sp != NULL) 
 		{
-			set_bullet_state(&ch->bullets[i]);
+			bullet_set_state(&ch->bullets[i], ch->b_lim);
 		}
 	}
 
@@ -195,7 +210,7 @@ void character_tick_bullets(struct Character *ch, struct Room *grid)
 	{
 		if (ch->bullets[i].sp != NULL)
 		{
-			move_bullet(&ch->bullets[i]);
+			bullet_move(&ch->bullets[i]);
 		}
 	}
 }
