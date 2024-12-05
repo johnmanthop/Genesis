@@ -5,8 +5,8 @@ What KMH means is a secret.
 
 The original game (that had some other stuff) was originally made in Godot and then ported
 
-i[screenshot](pics/a.png)
-i[screenshot](pics/b.png)
-i[screenshot](pics/c.png)
+![screenshot](pics/a.png)
+![screenshot](pics/b.png)
+![screenshot](pics/c.png)
 
 5/12/2024
