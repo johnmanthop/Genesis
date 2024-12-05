@@ -1,5 +1,6 @@
 #include "enemies.h"
 
+static u8 bl_counters[MAX_ENEMIES];
 static u8 en_counters[MAX_ENEMIES];
 static struct Room *grid = NULL;
 
@@ -23,6 +24,7 @@ void enemies_init(struct Character enemies[], struct Room *r)
 		y <<= 4;
 		character_set_position(&enemies[i], x, y);
 		
+		bl_counters[i] = 0;
 		en_counters[i] = 0;
 	}
 }
@@ -31,7 +33,7 @@ void move_single_enemy(struct Character *en, struct Character *pl, u8 i)
 {
 	u16 d = distance(&en->position, &pl->position);
 	
-	if (d < 90)
+	if (d < 60)
 	{
 		struct Point en_p = en->position;
 		struct Point pl_p = pl->position;
@@ -40,7 +42,7 @@ void move_single_enemy(struct Character *en, struct Character *pl, u8 i)
 			.x = (en_p.x - pl_p.x),
 			.y = (en_p.y - pl_p.y)
 		};
-		
+	
 		// find dominant axis
 		if (abs(direction_vector.x) > abs(direction_vector.y))
 		{
@@ -63,6 +65,24 @@ void move_single_enemy(struct Character *en, struct Character *pl, u8 i)
 			{
 				character_set_direction(en, UP);
 			}
+		}
+
+		if (bl_counters[i] >= 30)
+		{
+			for (u8 i = 0; i < MAX_ACTIVE_BULLETS; ++i)
+			{
+				if (en->bullets[i].sp == NULL)
+				{
+					character_fire(en, i, en->direction);
+					break;
+				}
+			}
+			
+			bl_counters[i] = 0;
+		}
+		else 
+		{
+			bl_counters[i]++;
 		}
 	}
 	else

@@ -23,7 +23,8 @@ struct Character
 };
 
 void character_init         		(struct Character *ch);
-void handle_player_input    		(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire);
+void character_fire					(struct Character *ch, u8 i, enum DIR d);
+void handle_player_input    		(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire, u8 player_flag);
 void character_set_position 		(struct Character *ch, s16 x, s16 y);
 void character_set_direction		(struct Character *ch, enum DIR d);
 void character_set_random_direction (struct Character *ch);

@@ -67,9 +67,15 @@ int main(bool hard)
     while (1)
     {
 		enemies_move(enemies, &ch);
-        handle_player_input(&ch, &r, player_v_x, player_v_y, fire);
-        character_tick_bullets(&ch, &r);
-        // wait for screen refresh
+        handle_player_input(&ch, &r, player_v_x, player_v_y, fire, 1);
+        
+		character_tick_bullets(&ch, &r);
+        for (u8 i = 0; i < MAX_ENEMIES; ++i)
+		{
+			character_tick_bullets(&enemies[i], &r);
+		}
+
+		// wait for screen refresh
         SPR_update();
         SYS_doVBlankProcess();
     }

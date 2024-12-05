@@ -19,6 +19,20 @@ void character_init(struct Character *ch)
 	}
 }
 
+void character_fire(struct Character *ch, u8 i, enum DIR d)
+{	
+	ch->bullets[i].frames_active = 0;
+    ch->bullets[i].position    = ch->position;
+	ch->bullets[i].position.x  += 4;
+	ch->bullets[i].position.y  += 4;
+    ch->bullets[i].direction   = d;
+    
+	ch->bullets[i].sp          = SPR_addSprite(&bullet_sprite, 
+                                                ch->bullets[i].position.x + PL_OFFSET_X, 
+                            					ch->bullets[i].position.y + PL_OFFSET_Y, 
+                                                TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+}
+
 void character_set_random_direction(struct Character *ch)
 {
 	ch->direction = direction_mapping[random() % 4];
@@ -49,7 +63,7 @@ void character_move_to_direction(struct Character *ch, struct Room *grid)
 		case DOWN:  v_y =  1; break;	
 	}
 
-	handle_player_input(ch, grid, v_x, v_y, 0);
+	handle_player_input(ch, grid, v_x, v_y, 0, 0);
 }
 
 void character_move(struct Character *ch, s16 x, s16 y)
@@ -97,7 +111,7 @@ static bool is_legal_move(struct Room *grid, u16 x, u16 y, s8 v_x, s8 v_y)
     }
 }
 
-void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire)
+void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y, u8 fire, u8 player_flag)
 {
     // top left
     u16 x1 = ch->position.x + 2;
@@ -121,21 +135,12 @@ void handle_player_input(struct Character *ch, struct Room *grid, s8 v_x, s8 v_y
 			if (ch->bullets[i].sp == NULL)
 			{
         		last_frame_fire = 1;
-				ch->bullets[i].frames_active = 0;
-        		ch->bullets[i].position    = ch->position;
-				ch->bullets[i].position.x  += 4;
-				ch->bullets[i].position.y  += 4;
-        		ch->bullets[i].direction   = ch->direction;
-    
-				ch->bullets[i].sp          = SPR_addSprite(&bullet_sprite, 
-                                                          ch->bullets[i].position.x + PL_OFFSET_X, 
-                                                          ch->bullets[i].position.y + PL_OFFSET_Y, 
-                                                          TILE_ATTR(PAL2, FALSE, FALSE, FALSE));
+				character_fire(ch, i, ch->direction);
 				break;
 			}
 		}
     }
-    else if (!fire) last_frame_fire = 0;
+    else if (!fire && player_flag) last_frame_fire = 0;
 
     if (v_x > 0)        
     {
